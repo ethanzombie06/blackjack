@@ -8,17 +8,17 @@ def add_card(deck,hand,ammount):
 
 def hand_val(hand):
     special_cards = {
-        "A" : "11",
-        "J" : "10",
-        "Q" : "10",
-        "K" : "10"
+        "A" : 11,
+        "J" : 10,
+        "Q" : 10,
+        "K" : 10
     }
     aces = 0
     value = 0
     for i in hand:
         try:
             value += int(i[:len(i)-1])
-        except Value Error:
+        except ValueError:
             if i[:len(i)-1] == "A":
                 aces += 1
             value += special_cards[i[:len(i)-1]]
@@ -29,19 +29,18 @@ def hand_val(hand):
 
 def board(dealer,player):
     print("Dealer hand = ",dealer[0])
-    print("Player hand = ",player,"\ncard value = ", hand_val(player))
+    print("Player hand = ",*player,"\ncard value = ", hand_val(player))
 
-def dealer_ai(hand):
-    if hand_val(hand) > 21:
-        return("dealer lost")
-
-    elif hand_val(hand)<= 16:
+def dealer_ai():
+    global dealer
+    hand = dealer
+    while hand_val(hand)<= 16:
         print("dealer hit")
         add_card(deck,hand,1)
-        print("Dealer hand =",hand )
-    else:
-        print("dealer hand value = ",hand_val(hand))
-        return(hand)
+    
+    print("Dealer hand",*hand,"\nDealer hand value = ",hand_val(hand))
+    dealer = hand
+    return dealer
 option = "y"
 while option == "y":
     deck = ["As","2s","3s","4s","5s","6s","7s","8s","9s","10s","Js","Qs","Ks"
@@ -67,16 +66,12 @@ while option == "y":
             add_card(deck,player,1)
 
         elif option == "s":
-            dealer_val=dealer_ai(dealer)
-            print("Dealer hand = ",dealer,"\ncard value = ", hand_val(dealer))
-
+            dealer_val = dealer_ai()
             if hand_val(dealer_val) > 21:
-                print("dealer lost \nYou Win!")
+                exit("Dealer bust \nYou Win!")
             elif hand_val(player)<hand_val(dealer_val):
-                print("you lost!")
-                exit()
+                exit("You lost!")
             else:
-                print("you win!")
-                exit()
+                exit("You win!")
         else:
             pass
