@@ -7,32 +7,46 @@ def add_card(deck,hand,ammount):
         deck.remove(deck[index])
 
 def hand_val(hand):
+    special_cards = {
+        "A" : 11,
+        "J" : 10,
+        "Q" : 10,
+        "K" : 10
+    }
+    aces = 0
     value = 0
     for i in hand:
-        value += int(i[:len(i)-1])
+        try:
+            value += int(i[:len(i)-1])
+        except ValueError:
+            if i[:len(i)-1] == "A":
+                aces += 1
+            value += special_cards[i[:len(i)-1]]
+    while value > 21 and aces > 0:
+        value -= 10
+        aces -= 1
     return(value)
 
 def board(dealer,player):
     print("Dealer hand = ",dealer[0])
-    print("Player hand = ",player,"\ncard value = ", hand_val(player))
+    print("Player hand = ",*player,"\ncard value = ", hand_val(player))
 
-def dealer_ai(hand):
-    if hand_val(hand) > 21:
-        return("dealer lost")
-
-    elif hand_val(hand)<= 16:
+def dealer_ai():
+    global dealer
+    hand = dealer
+    while hand_val(hand)<= 16:
         print("dealer hit")
         add_card(deck,hand,1)
-        print("Dealer hand =",hand )
-    else:
-        print("dealer hand value = ",hand_val(hand))
-        return(hand)
+    
+    print("Dealer hand",*hand,"\nDealer hand value = ",hand_val(hand))
+    dealer = hand
+    return dealer
 option = "y"
 while option == "y":
-    deck = ["1s","2s","3s","4s","5s","6s","7s","8s","9s","10s","10s","10s","10s"
-            ,"1c","2c","3c","4c","5c","6c","7c","8c","9c","10c","10c","10c","10c"
-            ,"1h","2h","3h","4h","5h","6h","7h","8h","9h","10h","10h","10h","10h"
-            ,"1d","2d","3d","4d","5d","6d","7d","8d","9d","10d","10d","10d","10d"]
+    deck = ["As","2s","3s","4s","5s","6s","7s","8s","9s","10s","Js","Qs","Ks"
+            ,"Ac","2c","3c","4c","5c","6c","7c","8c","9c","10c","Jc","Qc","Kc"
+            ,"Ah","2h","3h","4h","5h","6h","7h","8h","9h","10h","Jh","Qh","Kh"
+            ,"Ad","2d","3d","4d","5d","6d","7d","8d","9d","10d","Jd","Qd","Kd"]
     dealer = []
     player = []
 
@@ -52,16 +66,12 @@ while option == "y":
             add_card(deck,player,1)
 
         elif option == "s":
-            dealer_val=dealer_ai(dealer)
-            print("Dealer hand = ",dealer,"\ncard value = ", hand_val(dealer))
-
+            dealer_val = dealer_ai()
             if hand_val(dealer_val) > 21:
-                print("dealer lost \nYou Win!")
+                exit("Dealer bust \nYou Win!")
             elif hand_val(player)<hand_val(dealer_val):
-                print("you lost!")
-                exit()
+                exit("You lost!")
             else:
-                print("you win!")
-                exit()
+                exit("You win!")
         else:
             pass
